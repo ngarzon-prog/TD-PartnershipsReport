@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Partnerships — Weekly CRO Report · Q2 Week 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0b1f45; --blue: #1d4ed8; --sky: #3b82f6; --teal: #0891b2;
+    --green: #059669; --amber: #d97706; --red: #dc2626; --purple: #7c3aed;
+    --pink: #db2777; --bg: #f0f4ff; --card: #ffffff; --border: #e2e8f0;
+    --muted: #64748b; --text: #0f172a;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #0b1f45 0%, #1a3a6b 100%); padding: 24px 32px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 24px rgba(11,31,69,0.18); }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .header-title { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+  .header-sub { font-size: 13px; color: #93b4e8; margin-top: 4px; }
+  .tabs { display: flex; gap: 2px; }
+  .tab { background: transparent; color: rgba(255,255,255,0.6); border: none; border-radius: 10px 10px 0 0; padding: 9px 18px; font-weight: 700; font-size: 12px; cursor: pointer; font-family: inherit; letter-spacing: 0.03em; transition: all 0.15s; }
+  .tab.active { background: #fff; color: var(--navy); }
+  .tab:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.1); }
+
+  /* LAYOUT */
+  .content { padding: 28px 32px; max-width: 1100px; margin: 0 auto; }
+  .tab-panel { display: none; animation: fadeUp 0.3s ease; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION */
+  .section { margin-bottom: 28px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .section-accent { width: 4px; height: 22px; border-radius: 99px; flex-shrink: 0; }
+  .section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* CARD */
+  .card { background: var(--card); border-radius: 16px; padding: 20px 24px; box-shadow: 0 2px 16px rgba(11,31,69,0.07); border: 1px solid var(--border); }
+  .card-flush { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(11,31,69,0.07); border: 1px solid var(--border); }
+
+  /* KPI GRID */
+  .kpi-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .kpi-tile { background: var(--card); border-radius: 14px; padding: 18px 20px; flex: 1; min-width: 140px; box-shadow: 0 2px 16px rgba(11,31,69,0.07); animation: fadeUp 0.4s ease both; }
+  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 800; color: var(--text); line-height: 1; }
+  .kpi-delta { font-size: 12px; font-weight: 700; margin-top: 6px; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .pos { color: var(--green); }
+  .neg { color: var(--red); }
+  .neutral { color: var(--amber); }
+
+  /* TABLES */
+  table { border-collapse: collapse; width: 100%; }
+  th { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 8px 12px; text-align: left; border-bottom: 1.5px solid var(--border); }
+  td { font-size: 13px; color: var(--text); padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8faff; }
+
+  /* BADGE */
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; letter-spacing: 0.04em; white-space: nowrap; }
+
+  /* PROGRESS BAR */
+  .progress-track { background: #f1f5f9; border-radius: 99px; height: 7px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+
+  /* PARTNER HEALTH GRID */
+  .partner-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .partner-card { background: var(--card); border-radius: 12px; padding: 14px 16px; border: 1.5px solid var(--border); }
+  .partner-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .partner-name { font-weight: 700; font-size: 13px; }
+
+  /* NOTICE BOXES */
+  .notice { margin-top: 10px; padding: 10px 14px; border-radius: 10px; font-size: 12px; }
+  .notice-amber { background: #fff8e1; border: 1px solid rgba(217,119,6,0.25); color: #92400e; }
+  .notice-blue { background: #eff6ff; border: 1px solid rgba(59,130,246,0.25); color: #1e40af; }
+  .notice-pink { background: #fdf2f8; border: 1px solid rgba(219,39,119,0.19); color: #9d174d; }
+
+  /* FOCUS LIST */
+  .focus-list { display: flex; flex-direction: column; gap: 12px; }
+  .focus-item { display: flex; gap: 12px; align-items: flex-start; }
+  .focus-num { width: 24px; height: 24px; border-radius: 99px; background: var(--navy); color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .focus-text { font-size: 13px; line-height: 1.6; }
+
+  /* SUPPORT ITEMS */
+  .support-list { display: flex; flex-direction: column; gap: 10px; }
+  .support-item { background: var(--card); border: 1.5px solid var(--border); border-left: 4px solid var(--purple); border-radius: 12px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; }
+
+  /* Q2 PROGRESS */
+  .q2-bar-wrap { background: #f1f5f9; border-radius: 99px; height: 12px; overflow: hidden; margin: 10px 0 8px; }
+  .q2-bar-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+
+  /* WEEKLY CHART */
+  .bar-chart { display: flex; align-items: flex-end; gap: 10px; height: 110px; }
+  .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .bar-label-top { font-size: 11px; font-weight: 700; }
+  .bar-fill { width: 100%; border-radius: 6px 6px 0 0; transition: height 0.5s ease; }
+  .bar-label-bot { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.3; }
+
+  /* QUOTA TILE */
+  .quota-tile { background: var(--card); border-radius: 14px; padding: 18px 20px; flex: 1; min-width: 200px; animation: fadeUp 0.4s ease both; }
+  .quota-value { font-size: 32px; font-weight: 800; line-height: 1; }
+
+  /* FOOTER */
+  .footer { text-align: center; font-size: 12px; color: var(--muted); margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+  /* BLOCKED CARDS */
+  .blocked-list { display: flex; gap: 12px; flex-wrap: wrap; }
+  .blocked-card { flex: 1; min-width: 200px; background: #fff5f5; border: 1.5px solid rgba(220,38,38,0.19); border-left: 4px solid var(--red); border-radius: 12px; padding: 14px 16px; }
+
+  /* CHART CANVAS */
+  .chart-container { position: relative; height: 260px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-title">Partnerships — Weekly CRO Report</div>
+      <div class="header-sub">April 22 – April 28, 2026 · Q2 Week 3 · Natalia Garzon, Partnerships Manager</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab" onclick="switchTab('pipeline')">Pipeline</button>
+    <button class="tab" onclick="switchTab('partners')">Partners</button>
+    <button class="tab" onclick="switchTab('calendar')">Calendar</button>
+    <button class="tab" onclick="switchTab('risks')">Risks &amp; Actions</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ══ OVERVIEW ══ -->
+  <div id="tab-overview" class="tab-panel active">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--blue)"></div>
+        <span class="section-title" style="color:var(--blue)">📝 Executive Summary</span>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;line-height:1.7;color:var(--text)">One deal closed this week — $800 ARR from a VSCPA webinar attendee. The Partnerships Strategic Plan is a work in progress; several deliverables are pending based on conversations with Lina. On the events front: the FICPA Niche Report Webinar was a success with 147 attendees and 26 opt-in leads — the leads list has been received and outreach starts this week. The Negozee Demo Day (Apr 22) could not be held due to commitments on Frankie's side and will be rescheduled. All reporting is against the official $1M annual target; v2 plan remains pending leadership approval.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--teal)"></div>
+        <span class="section-title" style="color:var(--teal)">📊 This Week</span>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-tile" style="border-top:3px solid var(--sky);border:1.5px solid rgba(59,130,246,0.25);border-top:3px solid var(--sky)">
+          <div class="kpi-label">Closed ARR</div>
+          <div class="kpi-value">$800</div>
+          <div class="kpi-delta neg">▼ 60% WoW</div>
+          <div class="kpi-sub">vs $2,000 prior week</div>
+        </div>
+        <div class="kpi-tile" style="border:1.5px solid rgba(124,58,237,0.25);border-top:3px solid var(--purple)">
+          <div class="kpi-label">Deals Won</div>
+          <div class="kpi-value">1</div>
+          <div class="kpi-delta neg">▼ 50% WoW</div>
+          <div class="kpi-sub">vs 2 prior week</div>
+        </div>
+        <div class="kpi-tile" style="border:1.5px solid rgba(217,119,6,0.25);border-top:3px solid var(--amber)">
+          <div class="kpi-label">Avg ACV</div>
+          <div class="kpi-value">$800</div>
+          <div class="kpi-sub">Q1 avg: $1,219</div>
+        </div>
+        <div class="kpi-tile" style="border:1.5px solid rgba(5,150,105,0.25);border-top:3px solid var(--green)">
+          <div class="kpi-label">ICP-fit Leads</div>
+          <div class="kpi-value">2</div>
+          <div class="kpi-sub">of 27 total leads</div>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-tile" style="border:1.5px solid rgba(8,145,178,0.25);border-top:3px solid var(--teal)">
+          <div class="kpi-label">YTD ARR</div>
+          <div class="kpi-value">$54,449</div>
+          <div class="kpi-sub">Annual target: $1,000,000</div>
+        </div>
+        <div class="kpi-tile" style="border:1.5px solid rgba(219,39,119,0.25);border-top:3px solid var(--pink)">
+          <div class="kpi-label">YTD Customers</div>
+          <div class="kpi-value">45</div>
+          <div class="kpi-sub">Annual target: 500</div>
+        </div>
+        <div class="quota-tile" style="border:1.5px solid rgba(220,38,38,0.25);border-top:3px solid var(--red)">
+          <div class="kpi-label">Quota Pace</div>
+          <div class="quota-value" style="color:var(--text)">5%</div>
+          <div class="progress-track" style="margin:10px 0 4px">
+            <div class="progress-fill" style="width:5%;background:var(--red)"></div>
+          </div>
+          <div style="font-size:12px;color:var(--red);font-weight:700">$142,218 behind $1M pace</div>
+          <div style="font-size:11px;color:var(--muted)">$54,449 of $196,667 expected YTD</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--purple)"></div>
+        <span class="section-title" style="color:var(--purple)">📅 Q2 Progress</span>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Q2 ARR vs Q2 Target</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">April – June 2026</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:26px;font-weight:800">$2,800</div>
+            <div style="font-size:11px;color:var(--muted)">of $250,000 Q2 target</div>
+          </div>
+        </div>
+        <div class="q2-bar-wrap">
+          <div class="q2-bar-fill" style="width:1.12%;background:linear-gradient(90deg,var(--purple),var(--sky))"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <div style="font-size:12px;font-weight:700;color:var(--purple)">1% of Q2 target</div>
+          <div style="font-size:12px;color:var(--muted)">$247,200 remaining</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--sky)"></div>
+        <span class="section-title" style="color:var(--sky)">📈 Weekly ARR Trend</span>
+      </div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Partnerships pipeline — won deals by week</div>
+        <div class="bar-chart">
+          <div class="bar-wrap">
+            <div class="bar-label-top" style="color:var(--muted)">—</div>
+            <div class="bar-fill" style="height:6%;background:var(--border)"></div>
+            <div class="bar-label-bot">Mar 25–31</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-label-top" style="color:var(--muted)">—</div>
+            <div class="bar-fill" style="height:6%;background:var(--border)"></div>
+            <div class="bar-label-bot">Apr 1–7</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-label-top" style="color:var(--muted)">—</div>
+            <div class="bar-fill" style="height:6%;background:var(--border)"></div>
+            <div class="bar-label-bot">Apr 8–14</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-label-top" style="color:var(--muted)">$2,000</div>
+            <div class="bar-fill" style="height:100%;background:var(--border)"></div>
+            <div class="bar-label-bot">Apr 15–21</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-label-top" style="color:var(--sky)">$800</div>
+            <div class="bar-fill" style="height:40%;background:linear-gradient(180deg,var(--sky),var(--blue))"></div>
+            <div class="bar-label-bot">Apr 22–28</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--green)"></div>
+        <span class="section-title" style="color:var(--green)">🏆 Deals Closed This Week</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Close Date</th><th>Partner Source</th><th>Type</th><th>Firm Size</th><th>ACV</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600">Apr 22–28</td>
+              <td style="font-weight:700">VSCPA</td>
+              <td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td>
+              <td style="font-size:12px;color:var(--muted)">ch1 — Solo</td>
+              <td style="font-weight:700;color:var(--green)">$800</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--green)"></div>
+        <span class="section-title" style="color:var(--green)">💰 Month-over-Month Revenue</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Period</th><th>Customers</th><th>ARR</th><th>Avg ACV</th><th>Δ vs Prior</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Jan 2026</td><td>28</td><td style="font-weight:700">$34,749</td><td>$1,241</td><td style="color:var(--muted)">—</td></tr>
+            <tr><td style="font-weight:600">Feb 2026</td><td>7</td><td style="font-weight:700">$9,000</td><td>$1,285</td><td style="color:var(--red);font-weight:600">-$25,749 (-74%)</td></tr>
+            <tr><td style="font-weight:600">Mar 2026</td><td>7</td><td style="font-weight:700">$7,900</td><td>$1,128</td><td style="color:var(--red);font-weight:600">-$1,100 (-12%)</td></tr>
+            <tr><td style="font-weight:600">Apr (WTD)</td><td>3</td><td style="font-weight:700">$2,800</td><td>$933</td><td style="color:var(--red);font-weight:600">-$5,100 (-65%)</td></tr>
+            <tr style="background:#f8faff;font-weight:700"><td>Q1 Total</td><td>42</td><td>$51,649</td><td>~$1,219</td><td>—</td></tr>
+            <tr style="background:#eff6ff;font-weight:800;border-top:2px solid var(--sky)">
+              <td style="color:var(--blue)">YTD Total</td><td style="color:var(--blue)">45</td><td style="color:var(--blue)">$54,449</td><td style="color:var(--blue)">~$1,210</td><td style="color:var(--muted)">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MoM chart -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--blue)"></div>
+        <span class="section-title" style="color:var(--blue)">📊 ARR by Month</span>
+      </div>
+      <div class="card">
+        <div class="chart-container">
+          <canvas id="momChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /overview -->
+
+  <!-- ══ PIPELINE ══ -->
+  <div id="tab-pipeline" class="tab-panel">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--blue)"></div>
+        <span class="section-title" style="color:var(--blue)">🎯 YTD Funnel — Annual Goal Tracking</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Stage</th><th>Annual Target</th><th>YTD Actual</th><th>% of Annual</th><th>Progress</th><th>Remaining</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Total Leads</td><td>6,000</td><td style="font-weight:700;color:var(--red)">388</td><td>6%</td><td><div class="progress-track" style="width:80px"><div class="progress-fill" style="width:6%;background:var(--red)"></div></div></td><td style="color:var(--muted)">5,612</td></tr>
+            <tr><td style="font-weight:600">MQLs</td><td>3,000</td><td style="font-weight:700;color:var(--red)">25</td><td>1%</td><td><div class="progress-track" style="width:80px"><div class="progress-fill" style="width:1%;background:var(--red)"></div></div></td><td style="color:var(--muted)">2,975</td></tr>
+            <tr><td style="font-weight:600">SQLs</td><td>1,000</td><td style="font-weight:700;color:var(--red)">14</td><td>1%</td><td><div class="progress-track" style="width:80px"><div class="progress-fill" style="width:1%;background:var(--red)"></div></div></td><td style="color:var(--muted)">986</td></tr>
+            <tr><td style="font-weight:600">Customers</td><td>500</td><td style="font-weight:700;color:var(--red)">45</td><td>9%</td><td><div class="progress-track" style="width:80px"><div class="progress-fill" style="width:9%;background:var(--red)"></div></div></td><td style="color:var(--muted)">455</td></tr>
+            <tr style="background:#fff5f5"><td style="font-weight:600">Lost</td><td style="color:var(--muted)">—</td><td style="font-weight:700;color:var(--red)">1</td><td>—</td><td></td><td style="color:var(--muted)">—</td></tr>
+            <tr><td style="font-weight:600">Revenue ($)</td><td>$1,000,000</td><td style="font-weight:700;color:var(--red)">$54,449</td><td>5%</td><td><div class="progress-track" style="width:80px"><div class="progress-fill" style="width:5%;background:var(--red)"></div></div></td><td style="color:var(--muted)">$945,551</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="notice notice-amber">⚠️ Official annual target is $1M. A revised plan (v2) is currently under review with leadership — projecting $333K–$397K baseline — but has not yet been approved. All reporting is against the $1M target until further notice. ICP-fit leads critically low (11% ICP rate from VSCPA enrichment). Q2 campaigns must target 5+ employee firms explicitly.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--blue)"></div>
+        <span class="section-title" style="color:var(--blue)">📊 Funnel vs Target</span>
+      </div>
+      <div class="card">
+        <div class="chart-container">
+          <canvas id="funnelChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--sky)"></div>
+        <span class="section-title" style="color:var(--sky)">🔮 Next Week Pipeline Forecast</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Activity</th><th>Type</th><th>Date</th><th>Expected Leads</th><th>Expected Customers</th><th>Expected Revenue</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600">FICPA Webinar — leads outreach</td>
+              <td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Follow-up</span></td>
+              <td style="font-size:12px;color:var(--muted)">Pending list</td>
+              <td style="font-weight:700;color:var(--blue)">24</td>
+              <td style="font-weight:700;color:var(--green)">3</td>
+              <td style="font-weight:700;color:var(--green)">$3,840</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600">Negozee Demo Day — reschedule</td>
+              <td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Follow-up</span></td>
+              <td style="font-size:12px;color:var(--muted)">TBD</td>
+              <td style="font-weight:700;color:var(--blue)">10</td>
+              <td style="font-weight:700;color:var(--green)">3</td>
+              <td style="font-weight:700;color:var(--green)">$3,840</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /pipeline -->
+
+  <!-- ══ PARTNERS ══ -->
+  <div id="tab-partners" class="tab-panel">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--green)"></div>
+        <span class="section-title" style="color:var(--green)">💚 Partner Health</span>
+      </div>
+      <div class="partner-grid">
+        <div class="partner-card" style="border-left:4px solid var(--green);border-color:rgba(5,150,105,0.19)">
+          <div class="partner-card-top"><span class="partner-name">FICPA</span><span style="font-size:16px">🟢</span></div>
+          <span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Webinar completed — 147 attendees, 26 opt-in leads. List received; outreach starts this week.</div>
+        </div>
+        <div class="partner-card" style="border-left:4px solid var(--amber);border-color:rgba(217,119,6,0.19)">
+          <div class="partner-card-top"><span class="partner-name">Negozee</span><span style="font-size:16px">🟡</span></div>
+          <span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Demo Day cancelled (Apr 22) due to Frankie's commitments — needs rescheduling.</div>
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-top:6px">💰 $8,400 revenue</div>
+        </div>
+        <div class="partner-card" style="border-left:4px solid var(--amber);border-color:rgba(217,119,6,0.19)">
+          <div class="partner-card-top"><span class="partner-name">Tech Solutions</span><span style="font-size:16px">🟡</span></div>
+          <span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Channel</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Agreement sent to potential channel partner — waiting for feedback.</div>
+        </div>
+        <div class="partner-card" style="border-left:4px solid var(--green);border-color:rgba(5,150,105,0.19)">
+          <div class="partner-card-top"><span class="partner-name">Workflows for Tax Pros</span><span style="font-size:16px">🟢</span></div>
+          <span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Agreement approved by Jon and sent to Jamie.</div>
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-top:6px">💰 $30,359 revenue</div>
+        </div>
+        <div class="partner-card" style="border-left:4px solid var(--green);border-color:rgba(5,150,105,0.19)">
+          <div class="partner-card-top"><span class="partner-name">Exceed Sales</span><span style="font-size:16px">🟢</span></div>
+          <span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Agreement approved and signed by both parties.</div>
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-top:6px">💰 $3,100 revenue</div>
+        </div>
+        <div class="partner-card" style="border-left:4px solid var(--red);border-color:rgba(220,38,38,0.19)">
+          <div class="partner-card-top"><span class="partner-name">Right Exit</span><span style="font-size:16px">🔴</span></div>
+          <span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Channel</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Call scheduled today with Jon to discuss further. Agreement not yet approved.</div>
+        </div>
+        <div class="partner-card" style="border-left:4px solid var(--amber);border-color:rgba(217,119,6,0.19)">
+          <div class="partner-card-top"><span class="partner-name">NAEA</span><span style="font-size:16px">🟡</span></div>
+          <span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Webinar confirmed May 20 · $1,900 YTD</div>
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-top:6px">💰 $1,900 revenue</div>
+        </div>
+        <div class="partner-card" style="border-left:4px solid var(--amber);border-color:rgba(217,119,6,0.19)">
+          <div class="partner-card-top"><span class="partner-name">VSCPA</span><span style="font-size:16px">🟡</span></div>
+          <span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">1 deal closed this week · $800 YTD</div>
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-top:6px">💰 $800 revenue</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--amber)"></div>
+        <span class="section-title" style="color:var(--amber)">🥇 Partners by Revenue Contribution</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Rank</th><th>Partner</th><th>Type</th><th>YTD Revenue</th><th>Health</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:800;color:var(--amber);font-size:15px">#1</td><td style="font-weight:700">Workflows for Tax Pros</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td style="font-weight:700;color:var(--green)">$30,359</td><td style="font-size:16px">🟢</td><td style="font-size:12px;color:var(--muted)">Agreement approved by Jon and sent to Jamie. $30,359 YTD revenue.</td></tr>
+            <tr><td style="font-weight:800;color:var(--muted);font-size:15px">#2</td><td style="font-weight:700">Negozee</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td style="font-weight:700;color:var(--green)">$8,400</td><td style="font-size:16px">🟡</td><td style="font-size:12px;color:var(--muted)">Demo Day cancelled (Apr 22) due to Frankie's commitments — needs rescheduling.</td></tr>
+            <tr><td style="font-weight:800;color:var(--muted);font-size:15px">#3</td><td style="font-weight:700">Exceed Sales</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td style="font-weight:700;color:var(--green)">$3,100</td><td style="font-size:16px">🟢</td><td style="font-size:12px;color:var(--muted)">Agreement approved and signed by both parties. $3,100 YTD.</td></tr>
+            <tr><td style="font-weight:800;color:var(--muted);font-size:15px">#4</td><td style="font-weight:700">NAEA</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td style="font-weight:700;color:var(--green)">$1,900</td><td style="font-size:16px">🟡</td><td style="font-size:12px;color:var(--muted)">Webinar confirmed May 20 · $1,900 YTD</td></tr>
+            <tr><td style="font-weight:800;color:var(--muted);font-size:15px">#5</td><td style="font-weight:700">VSCPA</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td style="font-weight:700;color:var(--green)">$800</td><td style="font-size:16px">🟡</td><td style="font-size:12px;color:var(--muted)">1 deal closed this week · $800 YTD</td></tr>
+            <tr><td style="font-weight:800;color:var(--muted);font-size:15px">#6</td><td style="font-weight:700">Tech Solutions</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Channel</span></td><td style="color:var(--muted)">—</td><td style="font-size:16px">🟡</td><td style="font-size:12px;color:var(--muted)">Agreement sent — waiting for feedback.</td></tr>
+            <tr><td style="font-weight:800;color:var(--muted);font-size:15px">#7</td><td style="font-weight:700">Right Exit</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Channel</span></td><td style="color:var(--muted)">—</td><td style="font-size:16px">🔴</td><td style="font-size:12px;color:var(--muted)">Call with Jon today — agreement not yet approved.</td></tr>
+            <tr><td style="font-weight:800;color:var(--muted);font-size:15px">#8</td><td style="font-weight:700">FICPA</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td style="color:var(--muted)">—</td><td style="font-size:16px">🟢</td><td style="font-size:12px;color:var(--muted)">Webinar completed — 147 attendees, 26 opt-in leads. Outreach starts this week.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--navy)"></div>
+        <span class="section-title" style="color:var(--navy)">📋 Affiliate Partner Directory</span>
+      </div>
+      <div class="notice notice-blue" style="margin-bottom:10px">💰 Total Investment: <strong>$182,600</strong> across 16 affiliate partners</div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Association</th><th>Contact</th><th>State</th><th>Audience</th><th>Fee</th><th>Sponsorship Level</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://www.calcpa.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">California Society of CPAs (CALCPA)</a><div style="font-size:11px;color:var(--muted)">Denise.Bethel@calcpa.org</div></td><td style="font-size:12px">Denise Bethel</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">California</span></td><td style="font-weight:600">41,000</td><td style="font-weight:700;color:var(--green)">$30,450</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">NA</span></td></tr>
+            <tr><td><a href="https://www.csea.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">CSEA</a><div style="font-size:11px;color:var(--muted)">efarr@csea.org</div></td><td style="font-size:12px">Erica Farr</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">California</span></td><td style="font-weight:600">2,000</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Industry Partnership Pro</span></td></tr>
+            <tr><td><a href="https://cocpa.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">COCPA</a><div style="font-size:11px;color:var(--muted)">derrol@cocpa.org</div></td><td style="font-size:12px">Derrol Moorhead</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Colorado</span></td><td style="font-weight:600">6,400</td><td style="font-weight:700;color:var(--green)">$7,250</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Preferred Provider</span></td></tr>
+            <tr><td><a href="https://www.ficpa.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">FICPA</a><div style="font-size:11px;color:var(--muted)">MarjorieS@ficpa.org</div></td><td style="font-size:12px">Marjorie Stone</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Florida</span></td><td style="font-weight:600">18,500</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">NA</span></td></tr>
+            <tr><td><a href="https://fseaonline.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">FSEA</a><div style="font-size:11px;color:var(--muted)">EWilliams@trinityglobalfinancial.com</div></td><td style="font-size:12px">Ericka Williams</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Florida</span></td><td style="font-weight:600">650</td><td style="font-weight:700;color:var(--green)">$4,500</td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Gold Sponsor</span></td></tr>
+            <tr><td><a href="https://www.icpas.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">ICPAS</a><div style="font-size:11px;color:var(--muted)">mcgillk@icpas.org</div></td><td style="font-size:12px">Kristin McGill</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Illinois</span></td><td style="font-weight:600">21,000</td><td style="font-weight:700;color:var(--green)">$12,000</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">—</span></td></tr>
+            <tr><td><a href="https://www.incpas.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">INCPAS</a><div style="font-size:11px;color:var(--muted)">sponsors@incpas.org</div></td><td style="font-size:12px">Jennifer Rowell</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Indiana</span></td><td style="font-weight:600">8,000</td><td style="font-weight:700;color:var(--green)">$9,400</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">NA</span></td></tr>
+            <tr><td><a href="https://www.macpa.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">MACPA</a><div style="font-size:11px;color:var(--muted)">amanda@macpa.org</div></td><td style="font-size:12px">Amanda O'Dell</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Maryland</span></td><td style="font-weight:600">8,600</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Strategic Partner</span></td></tr>
+            <tr><td><a href="https://www.masscpas.org" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">MASSCPA</a><div style="font-size:11px;color:var(--muted)">kwells@masscpas.org</div></td><td style="font-size:12px">Kristin Wells</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Massachusetts</span></td><td style="font-weight:600">11,500</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Corporate Partner</span></td></tr>
+            <tr><td><a href="https://www.mnnatp.com/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">MNCPA</a><div style="font-size:11px;color:var(--muted)">lmueller@mncpa.org</div></td><td style="font-size:12px">Leslie Muller</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Minnesota</span></td><td style="font-weight:600">7,100</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">NA</span></td></tr>
+            <tr><td><a href="https://www.naea.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">NAEA</a><div style="font-size:11px;color:var(--muted)">kcomegys@naea.org</div></td><td style="font-size:12px">Kelli Comegys</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">National</span></td><td style="font-weight:600">11,000</td><td style="font-weight:700;color:var(--green)">$20,000</td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Gold Level</span></td></tr>
+            <tr><td><a href="https://navaschoolofbusiness.com" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">NAVA</a><div style="font-size:11px;color:var(--muted)">erick@navaschoolofbusiness.com</div></td><td style="font-size:12px">Erick Martinez</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">National</span></td><td style="font-weight:600">150</td><td style="font-weight:700;color:var(--green)">$19,000</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Platinum</span></td></tr>
+            <tr><td><a href="https://negozee.com/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">Negozee</a><div style="font-size:11px;color:var(--muted)">tony@negozee.com</div></td><td style="font-size:12px">Tony Martinez</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">National</span></td><td style="color:var(--muted)">—</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">NA</span></td></tr>
+            <tr><td><a href="https://www.njcpa.org/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">NJCPA</a><div style="font-size:11px;color:var(--muted)">EProven@njcpa.org</div></td><td style="font-size:12px">Eileen Proven</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">New Jersey</span></td><td style="font-weight:600">14,000</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(29,78,216,0.1);color:var(--blue)">Premier</span></td></tr>
+            <tr><td><a href="https://www.tx.cpa/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">TXCPA</a><div style="font-size:11px;color:var(--muted)">lshepherd@tx.cpa</div></td><td style="font-size:12px">Lani Sheperd</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Texas</span></td><td style="font-weight:600">28,000</td><td style="color:var(--muted)">—</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">—</span></td></tr>
+            <tr><td><a href="https://www.vscpa.com/" target="_blank" style="font-weight:700;color:var(--blue);text-decoration:none">VSCPA</a><div style="font-size:11px;color:var(--muted)">ao'dell@vscpa.com</div></td><td style="font-size:12px">Amanda O'Dell</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Virginia</span></td><td style="font-weight:600">12,000</td><td style="font-weight:700;color:var(--green)">$10,000</td><td><span class="badge" style="background:rgba(100,116,139,0.1);color:var(--muted)">NA</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--teal)"></div>
+        <span class="section-title" style="color:var(--teal)">🤝 Partner Activity Log</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Partner</th><th>Type</th><th>Activity</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">Negozee</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td>Demo Day — Reschedule</td><td style="font-size:16px">🟡</td><td style="color:var(--muted);font-size:12px">Cancelled Apr 22 (Frankie unavailable) — rescheduling in progress</td></tr>
+            <tr><td style="font-weight:700">FICPA</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td>Niche Report Webinar</td><td style="font-size:16px">🟢</td><td style="color:var(--muted);font-size:12px">Completed Apr 23 · 147 attendees · 26 leads · Outreach starts this week</td></tr>
+            <tr><td style="font-weight:700">Workflows for Tax Pros</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td>Agreement</td><td style="font-size:16px">🟢</td><td style="color:var(--muted);font-size:12px">Approved by Jon and sent to Jamie</td></tr>
+            <tr><td style="font-weight:700">Exceed Sales</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td>Agreement</td><td style="font-size:16px">🟢</td><td style="color:var(--muted);font-size:12px">Approved and signed by both parties</td></tr>
+            <tr><td style="font-weight:700">Right Exit</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Channel</span></td><td>Partnership agreement</td><td style="font-size:16px">🔴</td><td style="color:var(--muted);font-size:12px">Call with Jon today — agreement not yet approved</td></tr>
+            <tr><td style="font-weight:700">Tech Solutions</td><td><span class="badge" style="background:rgba(8,145,178,0.1);color:var(--teal)">Channel</span></td><td>Channel agreement</td><td style="font-size:16px">🟡</td><td style="color:var(--muted);font-size:12px">Agreement sent — waiting for feedback</td></tr>
+            <tr><td style="font-weight:700">NAEA</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td>Webinar confirmed</td><td style="font-size:16px">🟡</td><td style="color:var(--muted);font-size:12px">May 20 — Tax Return Delivery</td></tr>
+            <tr><td style="font-weight:700">COCPA</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td>Webinar confirmed</td><td style="font-size:16px">🟡</td><td style="color:var(--muted);font-size:12px">May 14 — Member Appreciation</td></tr>
+            <tr><td style="font-weight:700">CALCPA</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Affiliate</span></td><td>Webinar confirmed</td><td style="font-size:16px">🟡</td><td style="color:var(--muted);font-size:12px">June 22 — Tax Return Delivery</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--red)"></div>
+        <span class="section-title" style="color:var(--red)">🔴 Blocked Agreements</span>
+      </div>
+      <div class="blocked-list">
+        <div class="blocked-card">
+          <div style="font-weight:700;font-size:13px">Right Exit</div>
+          <div style="font-size:12px;color:var(--red);margin-top:4px">Call with Jon today — agreement not yet approved. Outcome pending.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /partners -->
+
+  <!-- ══ CALENDAR ══ -->
+  <div id="tab-calendar" class="tab-panel">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--pink)"></div>
+        <span class="section-title" style="color:var(--pink)">🎯 Event Performance Tracker</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Event</th><th>Partner</th><th>Date</th><th>Attendees</th><th>Leads (target)</th><th>Demos (target)</th><th>Revenue</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:700">Negozee Demo Day</td><td>Negozee</td><td style="font-weight:600">Apr 22</td>
+              <td style="color:var(--muted)">—</td>
+              <td><span style="font-weight:700;color:var(--muted)">—</span><span style="font-size:11px;color:var(--muted)"> / 10 target</span></td>
+              <td><span style="font-weight:700;color:var(--muted)">—</span><span style="font-size:11px;color:var(--muted)"> / 3 target</span></td>
+              <td style="color:var(--muted)">—</td>
+              <td><span class="badge" style="background:rgba(107,114,128,0.1);color:#6b7280">⚫ Cancelled</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700">FICPA Niche Report Webinar</td><td>FICPA</td><td style="font-weight:600">Apr 23</td>
+              <td style="font-weight:600">147</td>
+              <td><span style="font-weight:700;color:var(--green)">26</span><span style="font-size:11px;color:var(--muted)"> / 25 target</span></td>
+              <td><span style="font-weight:700;color:var(--muted)">—</span><span style="font-size:11px;color:var(--muted)"> / 5 target</span></td>
+              <td style="color:var(--muted)">—</td>
+              <td><span class="badge" style="background:rgba(5,150,105,0.1);color:var(--green)">🟢 Complete</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="notice notice-pink">📌 <strong>FICPA leads note:</strong> 1 lead was lost but opted in to receive info from us — likely still interested in TaxDome. Pipeline breakdown: 1 SQL, 1 MQL, remaining are new leads.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--blue)"></div>
+        <span class="section-title" style="color:var(--blue)">🗓️ Q2 Confirmed Webinars</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Month</th><th>Type</th><th>Partner</th><th>Event</th><th>Date</th><th>Time</th><th>Duration</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;color:var(--muted)">April</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Demo</span></td><td style="font-weight:700">Negozee</td><td>Demo Day</td><td style="font-weight:600">TBD</td><td style="font-size:12px;color:var(--muted)">TBD</td><td style="font-size:12px;color:var(--muted)">30 min</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">April</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Webinar</span></td><td style="font-weight:700">FICPA</td><td>Niche Report</td><td style="font-weight:600">Apr 23</td><td style="font-size:12px;color:var(--muted)">11am–Noon</td><td style="font-size:12px;color:var(--muted)">50 min</td><td style="font-size:16px">🟢</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">May</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Webinar</span></td><td style="font-weight:700">COCPA</td><td>Member Appreciation</td><td style="font-weight:600">May 14</td><td style="font-size:12px;color:var(--muted)">TBD</td><td style="font-size:12px;color:var(--muted)">50 min</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">May</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Webinar</span></td><td style="font-weight:700">NAEA</td><td>Tax Return Delivery</td><td style="font-weight:600">May 20</td><td style="font-size:12px;color:var(--muted)">1:00pm EST</td><td style="font-size:12px;color:var(--muted)">60 min</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">May</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Webinar</span></td><td style="font-weight:700">MNCPA</td><td>Tax Return Delivery</td><td style="font-weight:600">May 27</td><td style="font-size:12px;color:var(--muted)">Noon</td><td style="font-size:12px;color:var(--muted)">50 min</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">May</td><td><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple)">Demo</span></td><td style="font-weight:700">MASSCPA</td><td>Demo Day</td><td style="font-weight:600">May 28</td><td style="font-size:12px;color:var(--muted)">3:45pm EST</td><td style="font-size:12px;color:var(--muted)">30 min</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">June</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Webinar</span></td><td style="font-weight:700">INCPAS</td><td>Tax Return Delivery</td><td style="font-weight:600">Jun 3</td><td style="font-size:12px;color:var(--muted)">Noon</td><td style="font-size:12px;color:var(--muted)">50 min</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">June</td><td><span class="badge" style="background:rgba(59,130,246,0.1);color:var(--sky)">Webinar</span></td><td style="font-weight:700">CALCPA</td><td>Tax Return Delivery</td><td style="font-weight:600">Jun 22</td><td style="font-size:12px;color:var(--muted)">4:00–5:00pm</td><td style="font-size:12px;color:var(--muted)">60 min</td><td style="font-size:16px">🟡</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--teal)"></div>
+        <span class="section-title" style="color:var(--teal)">📍 Q2 Confirmed In-Person Events</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Month</th><th>Partner</th><th>Event</th><th>Date</th><th>Location</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;color:var(--muted)">May</td><td style="font-weight:700">VSCPA</td><td>VSCPA Ignite</td><td style="font-weight:600">May 7–8</td><td style="font-size:12px;color:var(--muted)">📍 Richmond, VA</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">May</td><td style="font-weight:700">NAVA</td><td>Tax Colloquium</td><td style="font-weight:600">May 25–27</td><td style="font-size:12px;color:var(--muted)">📍 Las Vegas, NV</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">June</td><td style="font-weight:700">FSEA</td><td>FSEA Annual Convention</td><td style="font-weight:600">Jun 11–13</td><td style="font-size:12px;color:var(--muted)">📍 Miramar Beach, FL</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">June</td><td style="font-weight:700">FICPA</td><td>FICPA MEGA Conference</td><td style="font-weight:600">Jun 14–16</td><td style="font-size:12px;color:var(--muted)">📍 Orlando, FL</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">June</td><td style="font-weight:700">CSEA</td><td>Super Seminar</td><td style="font-weight:600">Jun 16–18</td><td style="font-size:12px;color:var(--muted)">📍 Reno, NV</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">June</td><td style="font-weight:700">NJCPA</td><td>NJCPA Convention Expo</td><td style="font-weight:600">Jun 17–18</td><td style="font-size:12px;color:var(--muted)">📍 Atlantic City, NJ</td><td style="font-size:16px">🟡</td></tr>
+            <tr><td style="font-weight:600;color:var(--muted)">June</td><td style="font-weight:700">MACPA</td><td>MACPA Mid-Atlantic Coastal</td><td style="font-weight:600">Jun 22–24</td><td style="font-size:12px;color:var(--muted)">📍 Ocean City, MD</td><td style="font-size:16px">🟡</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--purple)"></div>
+        <span class="section-title" style="color:var(--purple)">📣 Co-Marketing Activities</span>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin:0">📌 <strong>Coming next week:</strong> Co-marketing activities per partner (besides in-person events and webinars) — including blog posts, emails, articles, and social media — will be added for each partner.</p>
+      </div>
+    </div>
+
+  </div><!-- /calendar -->
+
+  <!-- ══ RISKS & ACTIONS ══ -->
+  <div id="tab-risks" class="tab-panel">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--red)"></div>
+        <span class="section-title" style="color:var(--red)">⚠️ Risks &amp; Escalations</span>
+      </div>
+      <div class="card-flush">
+        <table>
+          <thead><tr><th>Risk</th><th>Impact</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">ACV dropped to $800 in latest deal</td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Medium</span></td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Medium</span></td><td style="font-size:12px;color:var(--muted)">Monitor May ACV; expect recovery as post-tax season pipeline matures</td></tr>
+            <tr><td style="font-weight:600">Right Exit agreement not yet approved</td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Medium</span></td><td><span class="badge" style="background:rgba(220,38,38,0.1);color:var(--red)">High</span></td><td style="font-size:12px;color:var(--muted)">Call with Jon today — outcome to determine next steps</td></tr>
+            <tr><td style="font-weight:600">FICPA leads outreach not yet started</td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Medium</span></td><td><span class="badge" style="background:rgba(5,150,105,0.1);color:var(--green)">Low</span></td><td style="font-size:12px;color:var(--muted)">List received — outreach begins this week</td></tr>
+            <tr><td style="font-weight:600">Negozee Demo Day not rescheduled</td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Medium</span></td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Medium</span></td><td style="font-size:12px;color:var(--muted)">Coordinate with Frankie to find new date ASAP</td></tr>
+            <tr><td style="font-weight:600">Partnerships funnel plan under development</td><td><span class="badge" style="background:rgba(220,38,38,0.1);color:var(--red)">High</span></td><td><span class="badge" style="background:rgba(217,119,6,0.1);color:var(--amber)">Medium</span></td><td style="font-size:12px;color:var(--muted)">New partnership funnel plan in progress — prioritize completion this week</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--blue)"></div>
+        <span class="section-title" style="color:var(--blue)">🎯 Focus for Next Week (Apr 28 – May 4)</span>
+      </div>
+      <div class="card">
+        <div class="focus-list">
+          <div class="focus-item"><div class="focus-num">1</div><div class="focus-text">Start FICPA leads outreach — list received, send Thank You email and begin 1:1 outreach this week</div></div>
+          <div class="focus-item"><div class="focus-num">2</div><div class="focus-text">Reschedule Negozee Demo Day — coordinate with Frankie for new date</div></div>
+          <div class="focus-item"><div class="focus-num">3</div><div class="focus-text">Finalize Right Exit outcome — follow up on today's call with Jon and define next steps</div></div>
+          <div class="focus-item"><div class="focus-num">4</div><div class="focus-text">New partnership funnel plan — continue building and align with Lina on deliverables and timeline</div></div>
+          <div class="focus-item"><div class="focus-num">5</div><div class="focus-text">Prepare for MASSCPA Demo Day (May 28) — confirm logistics, UTM links, and follow-up plan</div></div>
+          <div class="focus-item"><div class="focus-num">6</div><div class="focus-text">Begin co-marketing planning with signed partners (Workflows for Tax Pros, Exceed Sales)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-accent" style="background:var(--purple)"></div>
+        <span class="section-title" style="color:var(--purple)">🙋 Support Needed from Leadership</span>
+      </div>
+      <div class="support-list">
+        <div class="support-item"><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple);flex-shrink:0">Decision needed</span><div style="font-size:13px;line-height:1.5">Alignment on revised 2026 targets ($333K–$397K baseline / up to $528K with ACV recovery)</div></div>
+        <div class="support-item"><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple);flex-shrink:0">Support needed</span><div style="font-size:13px;line-height:1.5">Right Exit — outcome of today's call with Jon needed to unblock agreement</div></div>
+        <div class="support-item"><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple);flex-shrink:0">Escalation</span><div style="font-size:13px;line-height:1.5">Channel Partner Self-Service Activation bug — need DevOps confirmation this week</div></div>
+        <div class="support-item"><span class="badge" style="background:rgba(124,58,237,0.1);color:var(--purple);flex-shrink:0">Resource needed</span><div style="font-size:13px;line-height:1.5">HubSpot access for UTM attribution reporting</div></div>
+      </div>
+    </div>
+
+    <div class="footer">Next report: Wednesday, May 5, 2026 · Q2 Week 4</div>
+
+  </div><!-- /risks -->
+
+</div><!-- /content -->
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// MoM ARR Chart
+const momCtx = document.getElementById('momChart').getContext('2d');
+new Chart(momCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Jan 2026', 'Feb 2026', 'Mar 2026', 'Apr (WTD)'],
+    datasets: [{
+      label: 'ARR ($)',
+      data: [34749, 9000, 7900, 2800],
+      backgroundColor: ['rgba(29,78,216,0.75)', 'rgba(29,78,216,0.75)', 'rgba(29,78,216,0.75)', 'rgba(59,130,246,0.9)'],
+      borderRadius: 8, borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' $' + ctx.raw.toLocaleString() } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 12 } } },
+      y: { grid: { color: '#f1f5f9' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k', font: { size: 11 } } }
+    }
+  }
+});
+
+// Funnel Chart
+const funnelCtx = document.getElementById('funnelChart').getContext('2d');
+new Chart(funnelCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Total Leads', 'MQLs', 'SQLs', 'Customers'],
+    datasets: [
+      { label: 'Annual Target', data: [6000, 3000, 1000, 500], backgroundColor: 'rgba(226,232,240,0.8)', borderRadius: 6, borderSkipped: false },
+      { label: 'YTD Actual', data: [388, 25, 14, 45], backgroundColor: 'rgba(29,78,216,0.8)', borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { font: { size: 12 } } } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+</script>
+</body>
+</html>
